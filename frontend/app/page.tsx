@@ -74,7 +74,7 @@ export default function Home() {
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-emerald-900/20"></div>
         <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-4xl font-serif font-bold mb-6">Ready to Experience Luxury?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Ready to Experience Luxury?</h2>
           <p className="text-silver-300 mb-10 text-lg">Book your chauffeur today and enjoy a seamless, comfortable ride.</p>
           <a href="/booking" className="btn-primary">Reserve Now</a>
         </div>

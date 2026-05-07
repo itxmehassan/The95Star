@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-charcoal-800 text-charcoal-50 antialiased;
+    @apply bg-charcoal-800 text-charcoal-50 antialiased overflow-x-hidden;
   }
 }
 
