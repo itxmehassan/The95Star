@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[100svh] pt-32 pb-16 flex items-center justify-center overflow-hidden">
         {/* Placeholder for background image */}
         <div className="absolute inset-0 bg-charcoal-900 z-0">
            {/* In a real scenario, use next/image here */}
@@ -15,7 +15,7 @@ export default function Home() {
            <div className="absolute inset-0 bg-gradient-to-b from-charcoal-900/50 via-charcoal-900/20 to-charcoal-800"></div>
         </div>
         
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto mt-20">
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <span className="text-emerald-500 uppercase tracking-[0.3em] text-sm font-semibold mb-4 block">Welcome to 95 Star</span>
           <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight">
             The Ultimate <br/> Chauffeur Experience

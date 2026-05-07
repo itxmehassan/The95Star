@@ -23,27 +23,27 @@ export default function BookingWidget() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-12 bg-[#0a0a0a]/80 backdrop-blur-md border border-charcoal-800 rounded-2xl p-6 text-left shadow-2xl">
+    <div className="w-full max-w-5xl mx-auto mt-8 md:mt-12 bg-[#0a0a0a]/80 backdrop-blur-md border border-charcoal-800 rounded-2xl p-4 md:p-6 text-left shadow-2xl">
       {/* Tabs */}
-      <div className="flex items-center space-x-6 border-b border-charcoal-800 mb-6 pb-4">
+      <div className="flex items-center border-b border-charcoal-800 mb-6 pb-0">
         <button 
           onClick={() => setActiveTab('one-way')}
-          className={`flex items-center space-x-2 text-sm font-medium transition-colors relative ${activeTab === 'one-way' ? 'text-white' : 'text-charcoal-400 hover:text-silver-300'}`}
+          className={`flex-1 sm:flex-none flex justify-center sm:justify-start items-center space-x-2 text-sm font-medium transition-colors relative pb-4 ${activeTab === 'one-way' ? 'text-white' : 'text-charcoal-400 hover:text-silver-300'}`}
         >
           <MapPin size={16} />
           <span>One Way</span>
           {activeTab === 'one-way' && (
-            <span className="absolute -bottom-[17px] left-0 right-0 h-0.5 bg-emerald-500"></span>
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-500"></span>
           )}
         </button>
         <button 
           onClick={() => setActiveTab('hourly')}
-          className={`flex items-center space-x-2 text-sm font-medium transition-colors relative ${activeTab === 'hourly' ? 'text-white' : 'text-charcoal-400 hover:text-silver-300'}`}
+          className={`flex-1 sm:flex-none flex justify-center sm:justify-start items-center space-x-2 text-sm font-medium transition-colors relative pb-4 sm:ml-8 ${activeTab === 'hourly' ? 'text-white' : 'text-charcoal-400 hover:text-silver-300'}`}
         >
           <Clock size={16} />
           <span>Hourly</span>
           {activeTab === 'hourly' && (
-            <span className="absolute -bottom-[17px] left-0 right-0 h-0.5 bg-emerald-500"></span>
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-500"></span>
           )}
         </button>
       </div>
