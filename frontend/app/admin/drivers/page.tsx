@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Mock Data
 const mockDrivers = [
@@ -28,6 +28,18 @@ export default function DriversPage() {
     address: ''
   });
 
+  // Load from localStorage on client mount
+  useEffect(() => {
+    const saved = localStorage.getItem('95star_mock_drivers');
+    if (saved) {
+      try {
+        setDrivers(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse drivers from localStorage");
+      }
+    }
+  }, []);
+
   const ranges = ['All', 'Tomorrow', 'Today', 'Yesterday', 'Last 7 days', 'Last 31 days', 'Last 90 days', '12 months', 'Custom Range'];
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const years = ['2023', '2024', '2025', '2026', '2027'];
@@ -48,7 +60,9 @@ export default function DriversPage() {
       address: newDriver.address || 'N/A'
     };
     
-    setDrivers([driverToAdd, ...drivers]);
+    const updatedDrivers = [driverToAdd, ...drivers];
+    setDrivers(updatedDrivers);
+    localStorage.setItem('95star_mock_drivers', JSON.stringify(updatedDrivers));
     setIsModalOpen(false);
     setNewDriver({ firstName: '', lastName: '', email: '', ssn: '', phone: '', phoneType: '', dob: '', address: '' });
   };
