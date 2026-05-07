@@ -14,6 +14,8 @@ export default function DriversPage() {
   const [drivers, setDrivers] = useState(mockDrivers);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [openActionMenuId, setOpenActionMenuId] = useState<number | null>(null);
+  const [editingDriverId, setEditingDriverId] = useState<number | null>(null);
   const [filterTab, setFilterTab] = useState('Range');
   const [selectedRange, setSelectedRange] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,27 +46,70 @@ export default function DriversPage() {
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const years = ['2023', '2024', '2025', '2026', '2027'];
 
-  const handleCreateDriver = () => {
+  const handleSaveDriver = () => {
     if (!newDriver.firstName || !newDriver.email || !newDriver.phone) return;
-    const id = drivers.length > 0 ? Math.max(...drivers.map(d => d.id)) + 1 : 1;
     
-    const driverToAdd = {
-      id,
-      firstName: newDriver.firstName,
-      lastName: newDriver.lastName || 'N/A',
-      email: newDriver.email,
-      ssn: newDriver.ssn || 'N/A',
-      phone: newDriver.phone,
-      phoneType: newDriver.phoneType || 'N/A',
-      dob: newDriver.dob || 'N/A',
-      address: newDriver.address || 'N/A'
-    };
+    let updatedDrivers;
+    if (editingDriverId !== null) {
+      updatedDrivers = drivers.map(d => 
+        d.id === editingDriverId ? { 
+          id: editingDriverId,
+          firstName: newDriver.firstName,
+          lastName: newDriver.lastName || 'N/A',
+          email: newDriver.email,
+          ssn: newDriver.ssn || 'N/A',
+          phone: newDriver.phone,
+          phoneType: newDriver.phoneType || 'N/A',
+          dob: newDriver.dob || 'N/A',
+          address: newDriver.address || 'N/A'
+        } : d
+      );
+    } else {
+      const id = drivers.length > 0 ? Math.max(...drivers.map(d => d.id)) + 1 : 1;
+      const driverToAdd = {
+        id,
+        firstName: newDriver.firstName,
+        lastName: newDriver.lastName || 'N/A',
+        email: newDriver.email,
+        ssn: newDriver.ssn || 'N/A',
+        phone: newDriver.phone,
+        phoneType: newDriver.phoneType || 'N/A',
+        dob: newDriver.dob || 'N/A',
+        address: newDriver.address || 'N/A'
+      };
+      updatedDrivers = [driverToAdd, ...drivers];
+    }
     
-    const updatedDrivers = [driverToAdd, ...drivers];
     setDrivers(updatedDrivers);
     localStorage.setItem('95star_mock_drivers', JSON.stringify(updatedDrivers));
     setIsModalOpen(false);
+    setEditingDriverId(null);
     setNewDriver({ firstName: '', lastName: '', email: '', ssn: '', phone: '', phoneType: '', dob: '', address: '' });
+  };
+
+  const handleEditDriver = (driver: any) => {
+    setNewDriver({
+      firstName: driver.firstName,
+      lastName: driver.lastName === 'N/A' ? '' : driver.lastName,
+      email: driver.email,
+      ssn: driver.ssn === 'N/A' ? '' : driver.ssn,
+      phone: driver.phone,
+      phoneType: driver.phoneType === 'N/A' ? '' : driver.phoneType,
+      dob: driver.dob === 'N/A' ? '' : driver.dob,
+      address: driver.address === 'N/A' ? '' : driver.address
+    });
+    setEditingDriverId(driver.id);
+    setIsModalOpen(true);
+    setOpenActionMenuId(null);
+  };
+
+  const handleDeleteDriver = (id: number) => {
+    if (confirm('Are you sure you want to delete this driver?')) {
+      const updatedDrivers = drivers.filter(d => d.id !== id);
+      setDrivers(updatedDrivers);
+      localStorage.setItem('95star_mock_drivers', JSON.stringify(updatedDrivers));
+    }
+    setOpenActionMenuId(null);
   };
 
   const filteredDrivers = drivers.filter(driver => {
@@ -166,7 +211,11 @@ export default function DriversPage() {
           </div>
 
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setEditingDriverId(null);
+              setNewDriver({ firstName: '', lastName: '', email: '', ssn: '', phone: '', phoneType: '', dob: '', address: '' });
+              setIsModalOpen(true);
+            }}
             className="flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -176,7 +225,10 @@ export default function DriversPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card rounded-xl overflow-hidden overflow-x-auto">
+      {openActionMenuId !== null && (
+        <div className="fixed inset-0 z-40" onClick={() => setOpenActionMenuId(null)}></div>
+      )}
+      <div className="glass-card rounded-xl overflow-hidden overflow-x-auto relative z-30">
         <table className="w-full text-left text-sm text-silver-300 whitespace-nowrap">
           <thead className="bg-charcoal-800 border-b border-charcoal-700 text-xs font-semibold text-silver-400 uppercase tracking-wider">
             <tr>
@@ -188,6 +240,7 @@ export default function DriversPage() {
               <th className="px-6 py-4">Phone No Type</th>
               <th className="px-6 py-4">Date of Birth</th>
               <th className="px-6 py-4">Address</th>
+              <th className="px-6 py-4 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-charcoal-800">
@@ -201,6 +254,32 @@ export default function DriversPage() {
                 <td className="px-6 py-4">{driver.phoneType}</td>
                 <td className="px-6 py-4">{driver.dob}</td>
                 <td className="px-6 py-4">{driver.address}</td>
+                <td className="px-6 py-4 text-center relative">
+                  <button 
+                    onClick={() => setOpenActionMenuId(openActionMenuId === driver.id ? null : driver.id)}
+                    className="p-1 text-silver-400 hover:text-white bg-charcoal-700/50 hover:bg-charcoal-600 rounded transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  </button>
+                  {openActionMenuId === driver.id && (
+                    <div className="absolute right-6 top-10 w-32 bg-charcoal-800 border border-charcoal-600 rounded-lg shadow-xl z-50 overflow-hidden">
+                      <button 
+                        onClick={() => handleEditDriver(driver)}
+                        className="w-full text-left px-4 py-2 text-sm text-silver-300 hover:text-white hover:bg-charcoal-700 flex items-center"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 Z"/></svg>
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteDriver(driver.id)}
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -213,7 +292,7 @@ export default function DriversPage() {
           <div className="bg-charcoal-900 border border-charcoal-700 rounded-xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
             {/* Modal Header */}
             <div className="bg-emerald-600 px-6 py-4 flex justify-between items-center shrink-0">
-              <h2 className="text-white font-medium text-lg mx-auto pl-6">Create Driver</h2>
+              <h2 className="text-white font-medium text-lg mx-auto pl-6">{editingDriverId ? 'Edit Driver' : 'Create Driver'}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-white/80 hover:text-white transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
@@ -319,12 +398,12 @@ export default function DriversPage() {
                 Cancel
               </button>
               <button 
-                onClick={handleCreateDriver}
+                onClick={handleSaveDriver}
                 disabled={!newDriver.firstName || !newDriver.email || !newDriver.phone}
                 className="flex items-center px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors text-sm font-medium shadow-lg shadow-emerald-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Submit
+                {editingDriverId ? 'Update' : 'Submit'}
               </button>
             </div>
           </div>

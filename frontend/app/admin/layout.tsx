@@ -38,8 +38,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         
         {/* Scrollable Navigation */}
-        <div className="px-4 md:px-6 pb-4 md:pb-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden w-full">
-          <nav className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-visible w-full pb-2 md:pb-0 [&::-webkit-scrollbar]:hidden">
+        <div className="px-4 md:px-6 pb-4 md:pb-6 flex-1 overflow-y-auto w-full">
+          <nav className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-visible w-full pb-2 md:pb-0">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
