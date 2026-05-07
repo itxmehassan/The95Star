@@ -16,8 +16,7 @@ export default function SignupPage() {
     setError('');
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const res = await fetch(`${API_URL}/api/auth/signup`, {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
@@ -26,7 +25,7 @@ export default function SignupPage() {
       // Check if response is actually JSON before parsing
       const contentType = res.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Server error: API did not return JSON. The backend is either offline or the URL is incorrect.");
+        throw new Error("Server error: API did not return JSON.");
       }
 
       const data = await res.json();

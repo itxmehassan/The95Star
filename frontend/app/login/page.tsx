@@ -15,8 +15,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -25,7 +24,7 @@ export default function LoginPage() {
       // Check if response is actually JSON before parsing
       const contentType = res.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Server error: API did not return JSON. The backend is either offline or the URL is incorrect.");
+        throw new Error("Server error: API did not return JSON.");
       }
 
       const data = await res.json();
