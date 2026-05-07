@@ -16,8 +16,19 @@ export default function DriversPage() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [filterTab, setFilterTab] = useState('Range');
   const [selectedRange, setSelectedRange] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const ranges = ['All', 'Tomorrow', 'Today', 'Yesterday', 'Last 7 days', 'Last 31 days', 'Last 90 days', '12 months', 'Custom Range'];
+
+  const filteredDrivers = drivers.filter(driver => {
+    const q = searchQuery.toLowerCase();
+    return (
+      driver.firstName.toLowerCase().includes(q) ||
+      driver.lastName.toLowerCase().includes(q) ||
+      driver.email.toLowerCase().includes(q) ||
+      driver.phone.includes(q)
+    );
+  });
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -31,54 +42,56 @@ export default function DriversPage() {
       {/* Top Controls */}
       <div className="flex justify-between items-center mb-6 relative">
         <div className="relative">
-          <select className="appearance-none bg-charcoal-800 border border-charcoal-700 text-white rounded-lg pl-4 pr-10 py-2 focus:outline-none focus:border-emerald-500 w-48">
-            <option>All</option>
-            <option>Active</option>
-            <option>Inactive</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-silver-400">
-            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-          </div>
+          <button 
+            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            className="flex items-center justify-between bg-charcoal-800 border border-charcoal-700 text-white rounded-lg pl-4 pr-3 py-2 focus:outline-none focus:border-emerald-500 w-48 hover:bg-charcoal-700 transition-colors"
+          >
+            <span>All</span>
+            <svg className="fill-current h-4 w-4 text-silver-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+          </button>
+
+          {/* Filters Dropdown */}
+          {isFiltersOpen && (
+            <div className="absolute left-0 mt-2 w-64 bg-charcoal-800 border border-charcoal-700 rounded-lg shadow-xl z-50 overflow-hidden">
+              <div className="flex border-b border-charcoal-700">
+                {['Range', 'Month', 'Year'].map(tab => (
+                  <button 
+                    key={tab}
+                    onClick={() => setFilterTab(tab)}
+                    className={`flex-1 py-2 text-sm font-medium ${filterTab === tab ? 'bg-emerald-500 text-white' : 'text-silver-400 hover:text-white hover:bg-charcoal-700'}`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+              {filterTab === 'Range' && (
+                <div className="p-4 max-h-64 overflow-y-auto">
+                  {ranges.map(range => (
+                    <label key={range} className="flex items-center space-x-3 mb-3 cursor-pointer group">
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedRange === range ? 'border-emerald-500' : 'border-silver-500 group-hover:border-emerald-500'}`}>
+                        {selectedRange === range && <div className="w-2 h-2 rounded-full bg-emerald-500"></div>}
+                      </div>
+                      <span className="text-sm text-silver-300 group-hover:text-white">{range}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex space-x-3">
           <div className="relative">
-            <button 
-              onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-              className="flex items-center px-4 py-2 border border-emerald-500 text-emerald-500 rounded-lg hover:bg-emerald-500/10 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-              Filters
-            </button>
-
-            {/* Filters Dropdown */}
-            {isFiltersOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-charcoal-800 border border-charcoal-700 rounded-lg shadow-xl z-50 overflow-hidden">
-                <div className="flex border-b border-charcoal-700">
-                  {['Range', 'Month', 'Year'].map(tab => (
-                    <button 
-                      key={tab}
-                      onClick={() => setFilterTab(tab)}
-                      className={`flex-1 py-2 text-sm font-medium ${filterTab === tab ? 'bg-emerald-500 text-white' : 'text-silver-400 hover:text-white hover:bg-charcoal-700'}`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-                {filterTab === 'Range' && (
-                  <div className="p-4 max-h-64 overflow-y-auto">
-                    {ranges.map(range => (
-                      <label key={range} className="flex items-center space-x-3 mb-3 cursor-pointer group">
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedRange === range ? 'border-emerald-500' : 'border-silver-500 group-hover:border-emerald-500'}`}>
-                          {selectedRange === range && <div className="w-2 h-2 rounded-full bg-emerald-500"></div>}
-                        </div>
-                        <span className="text-sm text-silver-300 group-hover:text-white">{range}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-silver-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            </div>
+            <input 
+              type="text" 
+              placeholder="Search drivers..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full sm:w-64 bg-charcoal-800 border border-charcoal-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors" 
+            />
           </div>
 
           <button 
@@ -107,7 +120,7 @@ export default function DriversPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-charcoal-800">
-            {drivers.map((driver) => (
+            {filteredDrivers.map((driver) => (
               <tr key={driver.id} className="hover:bg-charcoal-800/30 transition-colors">
                 <td className="px-6 py-4 text-emerald-500 font-medium">{driver.firstName}</td>
                 <td className="px-6 py-4 text-white">{driver.lastName}</td>
