@@ -23,6 +23,12 @@ export default function SignupPage() {
         body: JSON.stringify({ name, email, password })
       });
 
+      // Check if response is actually JSON before parsing
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server error: API did not return JSON. The backend is either offline or the URL is incorrect.");
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
