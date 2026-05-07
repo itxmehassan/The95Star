@@ -22,10 +22,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex flex-col md:flex-row min-h-screen pt-[72px] bg-charcoal-900">
       {/* Sidebar / Mobile Topbar */}
-      <aside className="w-full md:w-64 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-charcoal-800 md:fixed md:h-[calc(100vh-72px)] z-40 flex flex-col">
-        <div className="p-4 md:p-6 flex flex-col md:flex-col w-full">
+      <aside className="w-full md:w-64 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-charcoal-800 md:fixed md:h-[calc(100vh-72px)] z-40 flex flex-col justify-between">
+        <div className="p-4 md:p-6 flex flex-col md:flex-col w-full md:flex-1 md:overflow-hidden">
           {/* Admin Profile - Hidden on mobile to save space, or just keep avatar */}
-          <div className="hidden md:flex items-center space-x-3 mb-8 pb-4 border-b border-charcoal-800">
+          <div className="hidden md:flex items-center space-x-3 mb-8 pb-4 border-b border-charcoal-800 shrink-0">
             <div className="w-10 h-10 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center font-bold">
               A
             </div>
@@ -35,10 +35,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
           
-          <p className="hidden md:block text-xs font-bold text-silver-500 uppercase tracking-wider mb-4">Management</p>
+          <p className="hidden md:block text-xs font-bold text-silver-500 uppercase tracking-wider mb-4 shrink-0">Management</p>
           
           {/* Navigation Links */}
-          <nav className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto w-full pb-2 md:pb-0 [&::-webkit-scrollbar]:hidden">
+          <nav className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-y-auto md:overflow-x-hidden w-full pb-2 md:pb-0 [&::-webkit-scrollbar]:hidden md:flex-1 md:pr-2">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         
         {/* Desktop Logout Button */}
-        <div className="hidden md:block absolute bottom-0 left-0 w-full p-6 border-t border-charcoal-800 bg-[#0a0a0a]">
+        <div className="hidden md:block w-full p-6 border-t border-charcoal-800 bg-[#0a0a0a] shrink-0">
           <button className="flex items-center space-x-3 text-red-400 hover:text-red-300 transition-colors w-full" onClick={() => {
             if (typeof window !== 'undefined') {
               localStorage.removeItem('token');
